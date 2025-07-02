@@ -1,0 +1,77 @@
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = temp.Web
+build_property.RootNamespace = temp.Web
+build_property.ProjectDir = /Users/abbyhegg/Projects/temp/temp.Web/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 9.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /Users/abbyhegg/Projects/temp/temp.Web
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/App.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Pages/Error.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9FcnJvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Routes.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Sb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9fSW1wb3J0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Layout/LoadingSpinner.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvTG9hZGluZ1NwaW5uZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-7jzkm6w3ns
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvTWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-5alupupykc
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Layout/SurveyPrompt.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvU3VydmV5UHJvbXB0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-t7ee1q526j
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Pages/Chat/Chat.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DaGF0L0NoYXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-3fop1r3jwc
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Pages/Chat/ChatCitation.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DaGF0L0NoYXRDaXRhdGlvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-3s1s663ick
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Pages/Chat/ChatHeader.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DaGF0L0NoYXRIZWFkZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-d0gjlebf3n
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Pages/Chat/ChatInput.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DaGF0L0NoYXRJbnB1dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-zfkjyia7a7
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Pages/Chat/ChatMessageItem.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DaGF0L0NoYXRNZXNzYWdlSXRlbS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-d7frqwxj65
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Pages/Chat/ChatMessageList.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DaGF0L0NoYXRNZXNzYWdlTGlzdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-66x4d8wbzy
+
+[/Users/abbyhegg/Projects/temp/temp.Web/Components/Pages/Chat/ChatSuggestions.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DaGF0L0NoYXRTdWdnZXN0aW9ucy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-h1jep7jd3w

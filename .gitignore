@@ -1,0 +1,19 @@
+# Ignore build outputs and user-specific files
+bin/
+obj/
+*.user
+*.suo
+.vs/
+# Ignore Rider and VSCode settings
+.idea/
+.vscode/
+# Ignore logs and temp files
+*.log
+*.tmp
+# Ignore user secrets (do not commit secrets.json)
+secrets.json
+# Ignore OS files
+.DS_Store
+Thumbs.db
+# Ignore publish output
+publish/

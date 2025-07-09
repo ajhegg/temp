@@ -20,7 +20,12 @@ builder.Services.AddAzureAISearchCollection<ExistingIndexChunk>("ai-search-new")
 // builder.Services.AddScoped<DataIngestor>(); // Commented out since using existing index
 builder.Services.AddSingleton<SemanticSearch, ExistingIndexSemanticSearch>();
 
+
 var app = builder.Build();
+
+
+// Map the file names API endpoint
+temp.Web.Endpoints.FileNamesEndpoint.MapFileNamesEndpoint(app);
 
 app.MapDefaultEndpoints();
 

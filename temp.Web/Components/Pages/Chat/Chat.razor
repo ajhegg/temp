@@ -4,6 +4,7 @@
 @inject IChatClient ChatClient
 @inject NavigationManager Nav
 @inject SemanticSearch Search
+@inject IJSRuntime JS
 @implements IDisposable
 
 <PageTitle>Chat</PageTitle>
@@ -21,10 +22,28 @@
 
 <div class="chat-container">
     <ChatSuggestions OnSelected="@AddUserMessageAsync" @ref="@chatSuggestions" />
+    <div class="page-width" style="margin-bottom: 8px; display: flex; gap: 8px; align-items: center;">
+        <select style="width: 100%; min-width: 160px; padding: 6px 12px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;"
+                @bind="selectedFileName">
+            <option value="">Find a file...</option>
+            @if (fileNames is not null)
+            {
+                foreach (var file in fileNames)
+                {
+                    <option value="@file">@file</option>
+                }
+            }
+        </select>
+        <button type="button" class="btn-default" @onclick="CopySelectedFileNameToClipboard" title="Copy to clipboard" style="padding: 6px 12px;">
+            Copy
+        </button>
+    </div>
     <ChatInput OnSend="@AddUserMessageAsync" @ref="@chatInput" />
 </div>
 
 @code {
+    private List<string>? fileNames;
+    private string? selectedFileName;
     private const string SystemPrompt = @"
         You are an assistant who answers questions about information you retrieve.
         Do not answer questions about anything else.
@@ -39,7 +58,15 @@
 
         The quote must be max 5 words, taken word-for-word from the search result, and is the basis for why the citation is relevant.
         Don't refer to the presence of citations; just emit these tags right at the end, with no surrounding text.
-        ";
+    ";
+
+    private async Task CopySelectedFileNameToClipboard()
+    {
+        if (!string.IsNullOrEmpty(selectedFileName))
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", selectedFileName);
+        }
+    }
 
     private readonly ChatOptions chatOptions = new();
     private readonly List<ChatMessage> messages = new();
@@ -48,10 +75,26 @@
     private ChatInput? chatInput;
     private ChatSuggestions? chatSuggestions;
 
-    protected override void OnInitialized()
+
+    protected override async Task OnInitializedAsync()
     {
         messages.Add(new(ChatRole.System, SystemPrompt));
         chatOptions.Tools = [AIFunctionFactory.Create(SearchAsync)];
+
+        // Load file names from the backend API
+        try
+        {
+            using var http = new HttpClient();
+            var baseUri = Nav.BaseUri.TrimEnd('/');
+            var apiUrl = $"{baseUri}/api/filenames";
+            var response = await http.GetAsync(apiUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                fileNames = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json);
+            }
+        }
+        catch { /* Optionally handle errors */ }
     }
 
     private async Task AddUserMessageAsync(ChatMessage userMessage)

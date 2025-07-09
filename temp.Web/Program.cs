@@ -16,8 +16,7 @@ openai.AddChatClient("gpt-4.1")
 openai.AddEmbeddingGenerator("text-embedding-3-small");
 
 builder.AddAzureSearchClient("azureAISearch");
-builder.Services.AddAzureAISearchCollection<ExistingIndexChunk>("ai-search-1751136271295");
-builder.Services.AddAzureAISearchCollection<IngestedDocument>("data-temp-documents");
+builder.Services.AddAzureAISearchCollection<ExistingIndexChunk>("ai-search-new");
 // builder.Services.AddScoped<DataIngestor>(); // Commented out since using existing index
 builder.Services.AddSingleton<SemanticSearch, ExistingIndexSemanticSearch>();
 

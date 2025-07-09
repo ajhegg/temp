@@ -27,7 +27,7 @@ This project is an AI chat application that lets you chat with your own data usi
    ```
 
 ### Azure AI Search
-1. Create an Azure AI Search resource and index (e.g., `ai-search-1751136271295`).
+1. Create an Azure AI Search resource and index (e.g., `ai-search-new`).
 2. Store your endpoint and admin key using .NET User Secrets:
    ```sh
    cd temp.AppHost

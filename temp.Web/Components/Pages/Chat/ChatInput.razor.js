@@ -9,8 +9,9 @@
     elem.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            elem.dispatchEvent(new CustomEvent('change', { bubbles: true }));
-            elem.closest('form').dispatchEvent(new CustomEvent('submit', { bubbles: true, cancelable: true }));
+            // Blazor's EditForm expects an 'input' event to update the bound value
+            elem.dispatchEvent(new Event('input', { bubbles: true }));
+            elem.form && elem.form.requestSubmit();
         }
     });
 }

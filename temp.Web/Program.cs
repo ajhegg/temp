@@ -20,12 +20,16 @@ builder.Services.AddAzureAISearchCollection<ExistingIndexChunk>("ai-search-new")
 // builder.Services.AddScoped<DataIngestor>(); // Commented out since using existing index
 builder.Services.AddSingleton<SemanticSearch, ExistingIndexSemanticSearch>();
 
-
+builder.Services.AddControllers();
+builder.Services.AddHttpClient(); // Register IHttpClientFactory for use in BlobIndexerEndpoint
 var app = builder.Build();
 
 
 // Map the file names API endpoint
 temp.Web.Endpoints.FileNamesEndpoint.MapFileNamesEndpoint(app);
+
+// Map the blob SAS API endpoint
+app.MapControllers();
 
 app.MapDefaultEndpoints();
 

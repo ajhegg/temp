@@ -1,3 +1,6 @@
+@using Microsoft.Extensions.AI
+@using Microsoft.JSInterop
+
 @inject IJSRuntime JS
 
 <EditForm Model="@this" OnValidSubmit="@SendMessageAsync">
@@ -5,6 +8,13 @@
         <textarea @ref="@textArea" @bind="@messageText" placeholder="Type your message..." rows="1"></textarea>
 
         <div class="tools">
+            <label class="attach" title="Upload file(s)">
+                <input type="file" multiple style="display:none" @ref="fileInput" @onchange="UploadFilesAsync" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tool-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 17.25H19A2.25 2.25 0 0 0 19 12.75h-.262a5.25 5.25 0 1 0-10.476 0H5A2.25 2.25 0 0 0 5 17.25h2.5" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 12v5m0 0l-2-2m2 2l2-2" />
+                </svg>
+            </label>
             <button type="button" title="Speak" class="mic-button" @onclick="StartSpeechRecognition">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tool-icon">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.25v1.25m0 0a4.25 4.25 0 0 1-4.25-4.25h0m8.5 0h0A4.25 4.25 0 0 1 12 19.5m0-15a3 3 0 0 1 3 3v4a3 3 0 0 1-6 0v-4a3 3 0 0 1 3-3z" />
@@ -21,6 +31,19 @@
 
 @code {
     private ElementReference textArea;
+    private ElementReference fileInput;
+    [Parameter]
+    public EventCallback<string> OnUploadSuccess { get; set; }
+
+    private async Task UploadFilesAsync(ChangeEventArgs e)
+    {
+        var module = await JS.InvokeAsync<IJSObjectReference>("import", "/js/ChatInput.upload.js");
+        // JS will call window.ChatInputUploadSuccess(fileName) on success
+        // Ensure callback is registered before upload
+        await JS.InvokeVoidAsync("eval", $"window.ChatInputUploadSuccess = (fileName) => DotNet.invokeMethodAsync('{typeof(ChatInput).Assembly.GetName().Name}', 'NotifyUploadSuccess', fileName);");
+        await module.InvokeVoidAsync("uploadFiles", fileInput, "/api/blob-sas");
+        await module.DisposeAsync();
+    }
     private string? messageText;
     private DotNetObjectReference<ChatInput>? dotNetHelper;
     [JSInvokable]
@@ -55,6 +78,15 @@
         }
     }
 
+    [JSInvokable]
+    public static Task NotifyUploadSuccess(string fileName)
+    {
+        UploadSuccessCallback?.Invoke(fileName);
+        return Task.CompletedTask;
+    }
+
+    public static Action<string>? UploadSuccessCallback;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -64,6 +96,13 @@
                 var module = await JS.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/Chat/ChatInput.razor.js");
                 await module.InvokeVoidAsync("init", textArea);
                 await module.DisposeAsync();
+                // Register static callback for upload success
+                UploadSuccessCallback = async (fileName) =>
+                {
+                    if (OnUploadSuccess.HasDelegate)
+                        await OnUploadSuccess.InvokeAsync(fileName);
+                };
+                await JS.InvokeVoidAsync("eval", $"window.ChatInputUploadSuccess = (fileName) => DotNet.invokeMethodAsync('{typeof(ChatInput).Assembly.GetName().Name}', 'NotifyUploadSuccess', fileName);");
             }
             catch (JSDisconnectedException)
             {

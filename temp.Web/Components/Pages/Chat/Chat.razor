@@ -38,7 +38,7 @@
             Copy
         </button>
     </div>
-    <ChatInput OnSend="@AddUserMessageAsync" @ref="@chatInput" />
+    <ChatInput OnSend="@AddUserMessageAsync" OnUploadSuccess="@HandleUploadSuccessAsync" @ref="@chatInput" />
 </div>
 
 @code {
@@ -153,6 +153,13 @@
         var results = await Search.SearchAsync(searchPhrase, filenameFilter, maxResults: 5);
         return results.Select(result =>
             $"<result filename=\"{result.DocumentId}\" page_number=\"{result.PageNumber}\">{result.Text}</result>");
+    }
+
+    private async Task HandleUploadSuccessAsync(string fileName)
+    {
+        var message = new ChatMessage(ChatRole.Assistant, "Upload successful. Please reload the page to see the new file.");
+        messages.Add(message);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

@@ -5,8 +5,17 @@
 
 <EditForm Model="@this" OnValidSubmit="@SendMessageAsync">
     <label class="input-box page-width">
-        <textarea @ref="@textArea" @bind="@messageText" placeholder="Type your message..." rows="1"></textarea>
-
+        <div style="position: relative; width: 100%;">
+            <textarea @ref="@textArea" @bind="@messageText" @oninput="OnInput" placeholder="Type your message..." rows="1" style="width: 100%;"></textarea>
+            <script src="js/caret.js"></script>
+            <script src="js/chatInput.preventTab.js"></script>
+            @if (!string.IsNullOrEmpty(autocompleteSuggestion))
+            {
+                <div class="autocomplete-popup" style="position: absolute; left: 0; bottom: 100%; background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 4px 8px; font-size: 0.95rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); z-index: 1000;">
+                    @autocompleteSuggestion
+                </div>
+            }
+        </div>
         <div class="tools" style="display: flex; gap: 1.25rem; align-items: center;">
             <label class="attach" title="Upload file(s)">
                 <input type="file" multiple style="display:none" @ref="fileInput" @onchange="UploadFilesAsync" />
@@ -87,6 +96,20 @@
 
     public static Action<string>? UploadSuccessCallback;
 
+    [JSInvokable]
+    public async Task AcceptAutocomplete()
+    {
+        if (!string.IsNullOrEmpty(autocompleteSuggestion) && !string.IsNullOrEmpty(messageText) && autocompleteStart >= 0)
+        {
+            messageText = messageText.Remove(autocompleteStart, autocompleteLength)
+                .Insert(autocompleteStart, autocompleteSuggestion ?? string.Empty);
+            autocompleteSuggestion = null;
+            await Task.Yield();
+            StateHasChanged();
+        }
+        await FocusAsync();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -103,10 +126,67 @@
                         await OnUploadSuccess.InvokeAsync(fileName);
                 };
                 await JS.InvokeVoidAsync("eval", $"window.ChatInputUploadSuccess = (fileName) => DotNet.invokeMethodAsync('{typeof(ChatInput).Assembly.GetName().Name}', 'NotifyUploadSuccess', fileName);");
+
+                // Set up JS interop for Tab preventDefault
+                var dotNetRef = DotNetObjectReference.Create(this);
+                await JS.InvokeVoidAsync("chatInputHandleTab", textArea, dotNetRef);
             }
             catch (JSDisconnectedException)
             {
             }
         }
+        // Set or clear autocomplete data attribute for JS
+        if (autocompleteSuggestion != null)
+        {
+            await JS.InvokeVoidAsync("eval", "document.querySelector('[data-autocomplete]')?.removeAttribute('data-autocomplete')");
+            await JS.InvokeVoidAsync("eval", "document.activeElement.setAttribute('data-autocomplete','true')");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("eval", "document.querySelector('[data-autocomplete]')?.removeAttribute('data-autocomplete')");
+        }
+    }
+
+    [Parameter]
+    public List<string>? FileNames { get; set; }
+
+    private string? autocompleteSuggestion;
+    private int autocompleteStart = -1;
+    private int autocompleteLength = 0;
+
+    private async Task OnInput(ChangeEventArgs e)
+    {
+        messageText = e.Value?.ToString() ?? "";
+        var caretPos = await JS.InvokeAsync<int>("getCaretPosition", textArea);
+        var word = GetCurrentWord(messageText ?? string.Empty, caretPos);
+
+        if (!string.IsNullOrEmpty(word) && word.Length >= 3 && FileNames is not null)
+        {
+            var match = FileNames.FirstOrDefault(f => f != null && f.StartsWith(word, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrEmpty(match))
+            {
+                autocompleteSuggestion = match;
+                autocompleteStart = caretPos - word.Length;
+                autocompleteLength = word.Length;
+            }
+            else
+            {
+                autocompleteSuggestion = null;
+            }
+        }
+        else
+        {
+            autocompleteSuggestion = null;
+        }
+        StateHasChanged();
+    }
+
+    private string GetCurrentWord(string text, int caretPos)
+    {
+        if (string.IsNullOrEmpty(text) || caretPos == 0) return "";
+        int start = caretPos - 1;
+        while (start >= 0 && !char.IsWhiteSpace(text[start]))
+            start--;
+        return text.Substring(start + 1, caretPos - start - 1);
     }
 }

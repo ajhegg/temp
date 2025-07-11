@@ -38,7 +38,7 @@
             Copy
         </button>
     </div>
-    <ChatInput OnSend="@AddUserMessageAsync" OnUploadSuccess="@HandleUploadSuccessAsync" @ref="@chatInput" />
+    <ChatInput OnSend="@AddUserMessageAsync" OnUploadSuccess="@HandleUploadSuccessAsync" @ref="@chatInput" FileNames="@fileNames" />
 </div>
 
 @code {
